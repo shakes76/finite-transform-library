@@ -1,0 +1,32 @@
+NTTW Changelog
+======================
+
+Version 1.22 RC
+-------------------------
+- Added fast prime length NTTs and their test apps. These only work for the 64-bit build of the library.
+- Added 2D version of this NTT. These only work for the 64-bit build of the library.
+- Added number theoretic functions helpers for these NTTs and its test app
+- Added NTT and iNTT apps
+- Added signed arrays support
+- Added Benchmarking python script
+- Updated the documentation
+
+Version 1.0a
+-------------------------
+Fixed Copyright notice.
+
+Version 1.0
+-------------------------
+Made library fully 32-bit and 64-bit only compliant.
+Added Timing module and test.
+Improved performance of library.
+Added Prime/Number Theory module.
+Updated tests and benchmark apps to match.
+Added 32-bit and 64-bit modes in project file.
+Removed Qt4 library dependencies. Only needs qmake to build library now.
+
+Version 1.0 Beta
+-------------------------
+- Added working version of the library with FNTT and 2D FNTT from closed source.
+- Added image and array libraries from closed source.
+- Added tests and bench of the library functions.

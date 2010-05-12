@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="frtw.cbp" active="1" />
+		<Project filename="tests\frt_test\frt_test.cbp" />
+		<Project filename="bench\fft_bench\fft_bench.cbp" />
+		<Project filename="bench\frt_bench\frt_bench.cbp" />
+		<Project filename="bench\mod_bench\mod_bench.cbp" />
+		<Project filename="bench\ntt_bench\ntt_bench.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

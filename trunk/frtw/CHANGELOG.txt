@@ -1,0 +1,8 @@
+FRTW Changelog
+======================
+
+Version 1.0 Beta
+-------------------------
+- Added working version of the library DRT and FRT functions.
+- Added complex valued array module
+- Added FFT module.
