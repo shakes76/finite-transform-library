@@ -3,12 +3,19 @@
 
 = Introduction =
 
-FRTW is especially designed to do Discrete Radon Transforms (DRT). These include the Fast/Finite Radon Transform (FRT) of Bolker, Grigoryan, Gertner, Fill and others (1986-1989) and the Mojette Transform of Guedon et al. (1995). See my [http://arxiv.org/abs/1006.1965 pre-print paper] on these transforms for more details.
+FRTW is especially designed to do Discrete Radon Transforms (DRT). These include the Fast/Finite Radon Transform (FRT) of Bolker, Grigoryan, Gertner, Fill and others (1986-1989) and the Mojette Transform of Guedon et al. (1995). See my [http://arxiv.org/abs/1006.1965 pre-print paper "Fast Mojette Transform for Discrete Tomography"] on these transforms for more details.
 
+The library depends on [http://www.fftw.org/ FFTW] and NTTW, the latter of which is also part of the FTL libraries.
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+The library is structured as follows. The modules include are:
+  * Radon module for DRTs (radon.h/.c).
+  * Noise module using Random Number Generators for producing Gaussian/Poisson noise (noise.h/.c).
+  * Mojette module for the (Fast) Mojette Transform operations (mojette.h/.c).
+  * Vector (nD) module for simple vector operations (vector.h/.c).
+  * Complex Array wrappers of the FFTW complex arrays (array_complex.h/.c).
+  * Fourier module for using FFTW (fourier.h/.c).
+See the [http://finitetransform.sourceforge.net/frtw_api/index.html FRTW API] documentation for more details.
+
+= Apps =
