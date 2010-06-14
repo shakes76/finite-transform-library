@@ -1,0 +1,14 @@
+#summary FRTW Description and Structure
+#labels Featured,Phase-Implementation
+
+= Introduction =
+
+FRTW is especially designed to do Discrete Radon Transforms (DRT). These include the Fast/Finite Radon Transform (FRT) of Bolker, Grigoryan, Gertner, Fill and others (1986-1989) and the Mojette Transform of Guedon et al. (1995). See my [http://arxiv.org/abs/1006.1965 pre-print paper] on these transforms for more details.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
