@@ -75,6 +75,17 @@ NTTW_DLL_SYM nttw_integer* array_1D(const size_t size);
 NTTW_DLL_SYM long* arraySigned_1D(const size_t size);
 
 /**
+ * \fn arrayUChar_1D(const size_t size)
+ * \brief Forms an 1D unsigned character array of size
+ * \return Pointer to the first element of the array.
+ *
+ * Constructs a 1-dimensional array of type unsigned char.
+ * The malloc function is used to allocate the memory and garbage collection
+ * is NOT automated, please use free_array() to deallocate the memory.
+*/
+NTTW_DLL_SYM unsigned char* arrayUChar_1D(const size_t size);
+
+/**
  * \fn array_1D_big(const size_t size)
  * \brief Forms an 1D array of size
  * \return Pointer to the first element of the array.
@@ -97,6 +108,12 @@ NTTW_DLL_SYM void init_1D(nttw_integer *data, const size_t size, const nttw_inte
  * Initializes a signed 1D array to value provided.
 */
 NTTW_DLL_SYM void initSigned_1D(long *data, const size_t size, const long value);
+
+/**
+ * \fn initUChar_1D(unsigned char *data, const size_t size, const unsigned char value)
+ * Initializes a unsigned character 1D array to value provided.
+*/
+NTTW_DLL_SYM void initUChar_1D(unsigned char *data, const size_t size, const unsigned char value);
 
 /**
  * \fn init_1D_big(nttw_big_integer *data, const size_t size, const nttw_big_integer value)

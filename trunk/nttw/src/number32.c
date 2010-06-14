@@ -12,13 +12,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DGV is distributed in the hope that it will be useful,
+ * NTTW is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with NTTW.  If not, see <http://www.gnu.org/licenses/>.
+ * along with NTTW. If not, see <http://www.gnu.org/licenses/>.
  *
  * \author Shekhar S. Chandra, 2008-9
 */
@@ -311,8 +311,8 @@ void fntt_prime(const nttw_integer *inData, nttw_integer *outData, const size_t 
     ///Convolve
     for (j = 0; j < convolveSize; j ++)
     {
-        orderedDataPadded[j] = (orderedDataPadded[j] * (nttw_big_integer)WPadded[j])%MODULUS;
         orderedDataPadded[j] = (orderedDataPadded[j] * (nttw_big_integer)x1)%MODULUS; //Divide by p-1
+        orderedDataPadded[j] = (orderedDataPadded[j] * (nttw_big_integer)WPadded[j])%MODULUS;
     }
 
     ///Convolution from Convolution Eigenvalues
@@ -328,9 +328,8 @@ void fntt_prime(const nttw_integer *inData, nttw_integer *outData, const size_t 
     convolveSize = p-1;
     for (j = 0; j < convolveSize; j ++)
     {
-        //orderedDataPadded[j] = (orderedDataPadded[j] * (nttw_big_integer)x1)%MODULUS; //Divide by p-1
         orderedDataPadded[j] += inData[0]; //Plus zeroth element
-        orderedDataPadded[j] %= MODULUS;
+        orderedDataPadded[j] %= primeDash;
     }
 
     ///Compute DC
@@ -346,7 +345,7 @@ void fntt_prime(const nttw_integer *inData, nttw_integer *outData, const size_t 
         sum = (sum * (nttw_big_integer)x2)%primeDash; //DC Divide by p
     outData[0] = sum; //DC
     if (notHighlyComposite) ///Copy padded result
-        extractResult_Rader(orderedDataPadded,orderedData,p,primeDash);
+        extractResult_Rader(orderedDataPadded,orderedData,p);
 
     for (j = 0; j < convolveSize; j ++)
     {
@@ -438,12 +437,12 @@ nttw_integer* padTransformMatrix_Rader(nttw_integer *transData, const size_t p, 
     return newData;
 }
 
-void extractResult_Rader(nttw_integer *paddedData, nttw_integer *data, const size_t p, const nttw_integer primeDash)
+void extractResult_Rader(nttw_integer *paddedData, nttw_integer *data, const size_t p)
 {
     size_t j;
 
     for (j = 0; j < p-1; j ++) ///Copy data from the first N-1 elements
-        data[j] = paddedData[j]%primeDash;
+        data[j] = paddedData[j];
 }
 
 void ntt_norm(nttw_integer *data, const size_t n)

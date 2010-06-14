@@ -1,6 +1,16 @@
 FRTW Changelog
 ======================
 
+Version 1.35
+-------------------------
+- Added Noise Module with Gaussian and Poisson noise support.
+- Added support for nD vectors via the Vector module.
+- Added Mojette module.
+- Added Mojette and Fast Mojette transforms for work developed by paper "Fast Mojette Transform for Discrete Tomography" (arXiv:1006.1965v1 [physics.med-ph]).
+- Added signed support for DRTs.
+- Added signed array to complex functions.
+- Added a number of applications for using the FRTW library.
+
 Version 1.0 Beta
 -------------------------
 - Added working version of the library DRT and FRT functions.

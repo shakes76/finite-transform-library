@@ -66,6 +66,21 @@ long* arraySigned_1D(const size_t size)
     return data;
 }
 
+unsigned char* arrayUChar_1D(const size_t size)
+{
+    unsigned char *data = NULL;
+
+    data = (unsigned char *)malloc(size*sizeof(unsigned char));
+
+    if(data == NULL)
+    {
+        //fprintf(stderr,"ERROR: Failed Memory Allocation.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return data;
+}
+
 nttw_big_integer* array_1D_big(const size_t size)
 {
     nttw_big_integer *data = NULL;
@@ -90,6 +105,14 @@ void init_1D(nttw_integer *data, const size_t size, const nttw_integer value)
 }
 
 void initSigned_1D(long *data, const size_t size, const long value)
+{
+    size_t j;
+
+    for (j = 0; j < size; j ++)
+        data[j] = value;
+}
+
+void initUChar_1D(unsigned char *data, const size_t size, const unsigned char value)
 {
     size_t j;
 
