@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="frtw.cbp" active="1" />
-		<Project filename="tests\frt_test\frt_test.cbp" />
-		<Project filename="bench\fft_bench\fft_bench.cbp" />
-		<Project filename="bench\frt_bench\frt_bench.cbp" />
-		<Project filename="bench\mod_bench\mod_bench.cbp" />
-		<Project filename="bench\ntt_bench\ntt_bench.cbp" />
+		<Project filename="frtw.cbp" />
+		<Project filename="apps/machine_properties/machine_properties.cbp" />
+		<Project filename="tests/frt_test/frt_test.cbp" />
+		<Project filename="bench/fft_bench/fft_bench.cbp" />
+		<Project filename="bench/frt_bench/frt_bench.cbp" />
+		<Project filename="bench/mod_bench/mod_bench.cbp" />
+		<Project filename="bench/ntt_bench/ntt_bench.cbp" />
+		<Project filename="apps/crop/crop.cbp" />
+		<Project filename="apps/drt/drt.cbp" />
+		<Project filename="apps/fmt/fmt.cbp" />
+		<Project filename="apps/fmt_angles/fmt_angles.cbp" />
+		<Project filename="apps/frt/frt.cbp" />
+		<Project filename="apps/ifmt/ifmt.cbp" />
+		<Project filename="apps/ifrt/ifrt.cbp" />
+		<Project filename="apps/katz/katz.cbp" />
+		<Project filename="apps/line/line.cbp" />
+		<Project filename="apps/mse/mse.cbp" />
+		<Project filename="apps/mt/mt.cbp" />
+		<Project filename="apps/mt2frt/mt2frt.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>

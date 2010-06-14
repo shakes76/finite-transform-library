@@ -1,6 +1,11 @@
 NTTW Changelog
 ======================
 
+Version 1.23
+-------------------------
+- Added unsigned char support for arrays and PGM files.
+- Minor Improvement exract result Rader function for prime length NTTs.
+
 Version 1.22 RC
 -------------------------
 - Added fast prime length NTTs and their test apps. These only work for the 64-bit build of the library.

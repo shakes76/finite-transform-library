@@ -15,8 +15,8 @@
 				<Option createStaticLib="1" />
 			</Target>
 			<Target title="Debug">
-				<Option output="../../bin/Debug/frtw" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../../obj/Debug/" />
+				<Option output="..\..\bin\Debug\frtw" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -24,8 +24,8 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="../../bin/frtw" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../../obj/" />
+				<Option output="..\..\bin\frtw" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\obj\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -39,32 +39,29 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="include/array_complex.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/fourier.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/radon.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="src/array_complex.c">
+		<Unit filename="include\array_complex.h" />
+		<Unit filename="include\fourier.h" />
+		<Unit filename="include\mojette.h" />
+		<Unit filename="include\noise.h" />
+		<Unit filename="include\radon.h" />
+		<Unit filename="include\vector.h" />
+		<Unit filename="src\array_complex.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/fourier.c">
+		<Unit filename="src\fourier.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/radon.c">
+		<Unit filename="src\mojette.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
+		</Unit>
+		<Unit filename="src\noise.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\radon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\vector.c">
+			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
 			<code_completion />

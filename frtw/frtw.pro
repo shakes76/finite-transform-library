@@ -27,11 +27,17 @@ DEFINES += NTTW_MAKEDLL
 
 message("FRTW C Library Build")
 HEADERS += include/array_complex.h \
+        include/vector.h \
         include/radon.h \
-	include/fourier.h
+        include/fourier.h \
+        include/mojette.h \
+	include/noise.h
 SOURCES += src/array_complex.c \
+        src/vector.c \
         src/radon.c \
-	src/fourier.c
+        src/fourier.c \
+        src/mojette.c \
+	src/noise.c
 
 headers.files  = $$HEADERS
 #doc.files      = $${DGV}/doc/html

@@ -157,10 +157,10 @@ NTTW_DLL_SYM nttw_integer* padData_Rader(nttw_integer *data, const size_t p, con
 NTTW_DLL_SYM nttw_integer* padTransformMatrix_Rader(nttw_integer *transData, const size_t p, const size_t newSize);
 
 /**
- * \fn extractResult_Rader(nttw_integer *paddedData, nttw_integer *data, const size_t p, const nttw_integer primeDash)
+ * \fn extractResult_Rader(nttw_integer *paddedData, nttw_integer *data, const size_t p)
  * \brief Extracts the data for the result from the padded result.
 */
-NTTW_DLL_SYM void extractResult_Rader(nttw_integer *paddedData, nttw_integer *data, const size_t p, const nttw_integer primeDash);
+NTTW_DLL_SYM void extractResult_Rader(nttw_integer *paddedData, nttw_integer *data, const size_t p);
 
 /**
  * \fn ntt_norm(nttw_integer *data, const size_t n)

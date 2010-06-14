@@ -6,11 +6,27 @@
  * This wraps all the FFTW malloc and free functions for producing arrays for 1D/2D.
  * Functions for copying and differencing arrays are included also.
  *
+ * This file is part of FRTW Library.
+ *
+ * FRTW is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FRTW is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FRTW. If not, see <http://www.gnu.org/licenses/>.
+ *
  * \author Shekhar S. Chandra, 2008-9
 */
 #ifndef ARRAY_COMPLEX_H_INCLUDED
 #define ARRAY_COMPLEX_H_INCLUDED
 
+#include <stdlib.h>
 #include <fftw3.h>
 #include <nttw/global.h>
 /**
@@ -18,12 +34,12 @@
 *
 * \section intro_sec Introduction
 *
-* The various Discrete Radon Transform Algorithms Optimised for C and performance. Array, Timing and Imaging modules are also provided via the NTTW library. 
+* The various Discrete Radon Transform Algorithms Optimised for C and performance. Array, Timing and Imaging modules are also provided via the NTTW library.
 * This library requires that the sister NTTW library be installed
 *
 * \section features Features
 *
-* Features an Array module, a micro-second Timing module an Imaging module via NTTW.  Fast Fourier Transforms module is provided via the external FFTW library. 
+* Features an Array module, a micro-second Timing module an Imaging module via NTTW.  Fast Fourier Transforms module is provided via the external FFTW library.
 * The Discrete Radon Transform and its fast implementation are provided for dyadic and prime lengths.
 */
 
@@ -49,11 +65,18 @@ NTTW_DLL_SYM void fftw_init_1D(fftw_complex *data, const size_t size, const nttw
 
 /**
  * \fn array_to_fftw_array(nttw_integer *source, fftw_complex *dest, const int size)
- * \brief Copies the real FFTW array components to array
+ * \brief Copies the array to the real FFTW array components
  *
  * IMPORTANT: Only the Real part of the FFTW is copied!
 */
 NTTW_DLL_SYM void array_to_fftw_array(nttw_integer *source, fftw_complex *dest, const int size);
+/**
+ * \fn arraySigned_to_fftw_array(long *source, fftw_complex *dest, const int size)
+ * \brief Copies the signed array to the real FFTW array components
+ *
+ * IMPORTANT: Only the Real part of the FFTW is copied!
+*/
+NTTW_DLL_SYM void arraySigned_to_fftw_array(long *source, fftw_complex *dest, const int size);
 /**
  * \fn fftw_array_to_array(fftw_complex *source, nttw_integer *dest, const int size)
  * \brief Copies the real FFTW array components to array
@@ -61,5 +84,41 @@ NTTW_DLL_SYM void array_to_fftw_array(nttw_integer *source, fftw_complex *dest, 
  * IMPORTANT: Only the Real part of the FFTW is copied!
 */
 NTTW_DLL_SYM void fftw_array_to_array(fftw_complex *source, nttw_integer *dest, const int size);
+/**
+ * \fn fftw_array_to_arraySigned(fftw_complex *source, long *dest, const int size)
+ * \brief Copies the real FFTW array components to signed array
+ *
+ * IMPORTANT: Only the Real part of the FFTW is copied!
+*/
+NTTW_DLL_SYM void fftw_array_to_arraySigned(fftw_complex *source, long *dest, const int size);
+//@}
+
+/**
+ * \defgroup Two_Dimensional_Pointer_Arrays Two Dimensional (2D) Pointer Array Objects
+ */
+//@{
+/**
+ * \fn ptrArray(const size_t size)
+ * \brief Constructs a pointer array of type nttw_integer* which is accessible from
+ * the zeroth index.
+*/
+NTTW_DLL_SYM nttw_integer** ptrArray(const size_t size);
+/**
+ * \fn free_ptrArray(nttw_integer **data)
+ * \brief Deletes or frees the pointer array that would have been created by ptrArray()
+ *
+ * Must be used with ptrArray() that allocates a pointer array. The pointers themselves
+ * are NOT deallocated. Use free() from <stdlib.h> to free them.
+*/
+NTTW_DLL_SYM void free_ptrArray(nttw_integer **data);
+/**
+ * \fn free_ptrArray_All(nttw_integer **data, const size_t size)
+ * \brief Deletes or frees the pointer array and subsequent 1-D arrays that each of the pointers
+ * are pointing too that would have been created by ptrArray().
+ *
+ * Must be used with ptrArray() that allocates a pointer array. The pointers in the array
+ * are deallocated.
+*/
+NTTW_DLL_SYM void free_ptrArray_All(nttw_integer **data, const size_t size);
 //@}
 #endif // ARRAY_COMPLEX_H_INCLUDED

@@ -47,6 +47,11 @@ NTTW_DLL_SYM int openFile_Read(const char *filename, FILE **inFilePtr, int binar
  * \brief Opens the file for write mode.
 */
 NTTW_DLL_SYM int openFile_Write(const char *filename, FILE **inFilePtr, int binary);
+/**
+ * \fn openFile_Append(const char *filename, FILE **inFilePtr, int binary)
+ * \brief Opens the file for append mode.
+*/
+NTTW_DLL_SYM int openFile_Append(const char *filename, FILE **inFilePtr, int binary);
 
 /**
  * \fn readCSV(nttw_integer **data, const int rows, const int cols, const char *filename)
@@ -89,6 +94,13 @@ NTTW_DLL_SYM int readPGM(nttw_integer **data, int *rows, int *cols, const char *
 NTTW_DLL_SYM int readSignedPGM(long **data, int *rows, int *cols, const char *filename, int binary);
 
 /**
+ * \fn readUCharPGM(unsigned char **data, int *rows, int *cols, const char *filename, int binary)
+ * \brief Inputs data as a PGM file with signed values.
+ * \return TRUE if successful.
+*/
+NTTW_DLL_SYM int readUCharPGM(unsigned char **data, int *rows, int *cols, const char *filename, int binary);
+
+/**
  * \fn writePGM(nttw_integer *data, const int rows, const int cols, const int greyMax, const char *filename, int binary)
  * \brief Outputs data as a PGM file.
  * \return TRUE if successful.
@@ -101,6 +113,13 @@ NTTW_DLL_SYM int writePGM(nttw_integer *data, const int rows, const int cols, co
  * \return TRUE if successful.
 */
 NTTW_DLL_SYM int writeSignedPGM(long *data, const int rows, const int cols, const int greyMax, const char *filename, int binary);
+
+/**
+ * \fn writeUCharPGM(unsigned char *data, const int rows, const int cols, const char *filename, int binary)
+ * \brief Outputs data as a PGM file with unsigned character values.
+ * \return TRUE if successful.
+*/
+NTTW_DLL_SYM int writeUCharPGM(unsigned char *data, const int rows, const int cols, const char *filename, int binary);
 //@}
 
 /**

@@ -1,3 +1,29 @@
+/**
+ * FRTW Radon Library
+ * \file radon.c
+ * \brief Radon Transforms Source for the FRTW C Library.
+ *
+ * This header provides all the discrete operations related to the Radon Transform.
+ * It includes the Discrete Radon Transform (FRT) as well as other discretized
+ * versions of the Radon Transform.
+ *
+ * This file is part of FRTW Library.
+ *
+ * FRTW is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FRTW is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FRTW. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \author Shekhar S. Chandra, 2008-9
+*/
 #include <nttw/image.h>
 #include <nttw/prime.h>
 #include <nttw/number32.h>
@@ -11,7 +37,21 @@ nttw_integer getIsum(nttw_integer *radon, const size_t n)
     nttw_integer Isum = 0;
 
     for(j = 0; j < n; j ++)
-        Isum += radon[j];
+        Isum += radon[j]; //Sum first projection
+
+    return Isum;
+}
+
+nttw_integer getIsum_Integer(nttw_integer *radon, const size_t n, const nttw_integer modulus)
+{
+    size_t j;
+    nttw_integer Isum = 0;
+
+    for(j = 0; j < n; j ++)
+    {
+        Isum += radon[j]; //Sum first projection
+        Isum %= modulus;
+    }
 
     return Isum;
 }
@@ -101,6 +141,7 @@ void frt(nttw_integer *field, nttw_integer *bins, const int p)
         //Copy and norm
         for (j = 0; j < p; j ++)
             bins[m*p+j] = (nttw_integer) ( projComplex[j][0]/(double)p + 0.5 ); //Round because of epsilons
+            //bins[m*p+j] = (nttw_integer) ( projComplex[j][0] + 0.5 ); //Round because of epsilons
     }
 
     ///Clean up
@@ -135,8 +176,8 @@ void frt_dyadic(nttw_integer *field, nttw_integer *bins, const int n)
 
         for(j = 0; j < n; j ++)
         {
-            slice[j][0] /= n*n;
-            slice[j][1] /= n*n;
+            slice[j][0] /= n;
+            slice[j][1] /= n;
         }
 
         ifft(fftRank,sizes,slice,projComplex);
@@ -153,8 +194,8 @@ void frt_dyadic(nttw_integer *field, nttw_integer *bins, const int n)
 
         for(j = 0; j < n; j ++)
         {
-            slice[j][0] /= n*n;
-            slice[j][1] /= n*n;
+            slice[j][0] /= n;
+            slice[j][1] /= n;
         }
 
         ifft(fftRank,sizes,slice,projComplex);
@@ -162,6 +203,75 @@ void frt_dyadic(nttw_integer *field, nttw_integer *bins, const int n)
         for (j = 0; j < n; j ++)
             //bins[(m+n)*n+j] = (nttw_integer) ( projComplex[j][0]/(double)n + 0.5 ); //Round because of epsilons
             bins[(m+n)*n+j] = (nttw_integer) ( projComplex[j][0] + 0.5 ); //Round because of epsilons
+    }
+
+    ///Clean up
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+}
+
+void frt_dyadic_signed(long *field, long *bins, const int n)
+{
+    const int size = n*n;
+    int m, j, fftRank = 2, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+
+    sizes[0] = n;
+    sizes[1] = n;
+    complexField = fftw_array(size);
+    fftResult = fftw_array(size);
+    slice = fftw_array(n);
+    projComplex = fftw_array(n);
+
+    ///FFT image
+    arraySigned_to_fftw_array(field,complexField,size);
+    fft(fftRank,sizes,complexField,fftResult);
+
+    ///Extract slices
+    fftRank = 1;
+    for(m = 0; m < n; m ++)
+    {
+        getSlice(m,fftResult,slice,n);
+
+        for(j = 0; j < n; j ++)
+        {
+            slice[j][0] /= n;
+            slice[j][1] /= n;
+        }
+
+        ifft(fftRank,sizes,slice,projComplex);
+
+        //Copy and norm
+        for (j = 0; j < n; j ++)
+        {
+            if(projComplex[j][0] < 0)
+                bins[m*n+j] = (long) ( projComplex[j][0] - 0.5 ); //Round because of epsilons
+            else
+                bins[m*n+j] = (long) ( projComplex[j][0] + 0.5 ); //Round because of epsilons
+        }
+    }
+
+    for(m = 0; m < n/2; m ++)
+    {
+        getSlice_Perp(m,fftResult,slice,n);
+
+        for(j = 0; j < n; j ++)
+        {
+            slice[j][0] /= n;
+            slice[j][1] /= n;
+        }
+
+        ifft(fftRank,sizes,slice,projComplex);
+        //Copy and norm
+        for (j = 0; j < n; j ++)
+        {
+            if(projComplex[j][0] < 0)
+                bins[m*n+j] = (long) ( projComplex[j][0] - 0.5 ); //Round because of epsilons
+            else
+                bins[m*n+j] = (long) ( projComplex[j][0] + 0.5 ); //Round because of epsilons
+        }
     }
 
     ///Clean up
@@ -292,8 +402,8 @@ nttw_integer ifrt_dyadic(nttw_integer *bins, nttw_integer *result, const int n, 
         fft(fftRank,sizes,projComplex,slice);
         for (j = 0; j < n; j ++)
         {
-            slice[j][0] /= oversampling[j];
-            slice[j][1] /= oversampling[j];
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
         }
         setSlice(m,fftResult,slice,n);
     }
@@ -308,8 +418,8 @@ nttw_integer ifrt_dyadic(nttw_integer *bins, nttw_integer *result, const int n, 
         fft(fftRank,sizes,projComplex,slice);
         for (j = 0; j < n; j ++)
         {
-            slice[j][0] /= oversampling[j];
-            slice[j][1] /= oversampling[j];
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
         }
         setSlice_Perp(m,fftResult,slice,n);
     }
@@ -328,6 +438,174 @@ nttw_integer ifrt_dyadic(nttw_integer *bins, nttw_integer *result, const int n, 
             for (j = 0; j < n; j ++)
                 //result[m][j] = (nttw_integer) (result[m][j]/(double)n - Isum + 0.5)/n; //Avoid truncation
                 result[m*n+j] = (nttw_integer) (result[m*n+j]/(double)n + 0.5); //Avoid truncation
+    }
+
+    ///Cleanup
+    free_array(oversampling);
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+
+    return Isum;
+}
+
+nttw_integer ifrt_dyadic_signed(nttw_integer *bins, long *result, const int n, const int norm)
+{
+    const int size = n*n;
+    int m, j, fftRank = 1, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+    nttw_big_integer *oversampling;
+    nttw_integer Isum = 0;
+
+    Isum = getIsum(bins,n);
+    oversampling = array_1D_big(n);
+    sizes[0] = n;
+    sizes[1] = n;
+    complexField = fftw_array(size);
+    fftw_init_1D(complexField,size,0);
+    fftResult = fftw_array(size);
+    fftw_init_1D(fftResult,size,0);
+    slice = fftw_array(n);
+    projComplex = fftw_array(n);
+
+    dyadic_1D_filter(oversampling,n);
+
+    ///FFT projections
+    for(m = 0; m < n; m ++)
+    {
+        for (j = 0; j < n; j ++)
+        {
+            projComplex[j][0] = (double) bins[m*n+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        for (j = 0; j < n; j ++)
+        {
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
+        }
+        setSlice(m,fftResult,slice,n);
+    }
+
+    for(m = 0; m < n/2; m ++)
+    {
+        for (j = 0; j < n; j ++)
+        {
+            projComplex[j][0] = (double) bins[(m+n)*n+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        for (j = 0; j < n; j ++)
+        {
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
+        }
+        setSlice_Perp(m,fftResult,slice,n);
+    }
+
+    ///Correct for oversampling
+    //dyadic_oversample(oversampling,n); ///Get oversample filter (no need to orient for Fourier)
+    //filter_oversampling(fftResult,oversampling,n);
+
+    ///Inverse FFT to get result
+    fftRank = 2;
+    ifft(fftRank,sizes,fftResult,complexField);
+    fftw_array_to_arraySigned(complexField,result,size);
+    if(norm)
+    {
+        for(m = 0; m < n; m ++)
+            for (j = 0; j < n; j ++)
+            {
+                if(result[m*n+j] < 0)
+                    result[m*n+j] = (long) (result[m*n+j]/(double)n - 0.5); //Avoid truncation
+                else
+                    result[m*n+j] = (long) (result[m*n+j]/(double)n + 0.5); //Avoid truncation
+            }
+    }
+
+    ///Cleanup
+    free_array(oversampling);
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+
+    return Isum;
+}
+
+nttw_integer ifrt_dyadic_signed2(long *bins, long *result, const int n, const int norm)
+{
+    const int size = n*n;
+    int m, j, fftRank = 1, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+    nttw_big_integer *oversampling;
+    nttw_integer Isum = 0;
+
+    //Isum = getIsum(bins,n);
+    oversampling = array_1D_big(n);
+    sizes[0] = n;
+    sizes[1] = n;
+    complexField = fftw_array(size);
+    fftw_init_1D(complexField,size,0);
+    fftResult = fftw_array(size);
+    fftw_init_1D(fftResult,size,0);
+    slice = fftw_array(n);
+    projComplex = fftw_array(n);
+
+    dyadic_1D_filter(oversampling,n);
+
+    ///FFT projections
+    for(m = 0; m < n; m ++)
+    {
+        for (j = 0; j < n; j ++)
+        {
+            projComplex[j][0] = (double) bins[m*n+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        for (j = 0; j < n; j ++)
+        {
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
+        }
+        setSlice(m,fftResult,slice,n);
+    }
+
+    for(m = 0; m < n/2; m ++)
+    {
+        for (j = 0; j < n; j ++)
+        {
+            projComplex[j][0] = (double) bins[(m+n)*n+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        for (j = 0; j < n; j ++)
+        {
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
+        }
+        setSlice_Perp(m,fftResult,slice,n);
+    }
+
+    ///Correct for oversampling
+    //dyadic_oversample(oversampling,n); ///Get oversample filter (no need to orient for Fourier)
+    //filter_oversampling(fftResult,oversampling,n);
+
+    ///Inverse FFT to get result
+    fftRank = 2;
+    ifft(fftRank,sizes,fftResult,complexField);
+    fftw_array_to_arraySigned(complexField,result,size);
+    if(norm)
+    {
+        for(m = 0; m < n; m ++)
+            for (j = 0; j < n; j ++)
+            {
+                if(result[m*n+j] < 0)
+                    result[m*n+j] = (long) (result[m*n+j]/(double)n - 0.5); //Avoid truncation
+                else
+                    result[m*n+j] = (long) (result[m*n+j]/(double)n + 0.5); //Avoid truncation
+            }
     }
 
     ///Cleanup
@@ -462,14 +740,22 @@ void dyadic_1D_filter(nttw_big_integer *data, const int n)
         data[j] = euclidean(j,n,&x,&y);
 }
 
-void filter_oversampling(fftw_complex *fftSpace, nttw_integer *samples, const int n)
+void filter_oversampling(fftw_complex *fftSpace, nttw_big_integer *samples, const int n)
 {
     int j, k;
 
     for(j = 0; j < n; j ++)
         for(k = 0; k < n; k ++)
         {
-            fftSpace[j*n+k][0] /= (double) samples[j*n+k]; ///Correct Coefficients
-            fftSpace[j*n+k][1] /= (double) samples[j*n+k]; ///Correct Coefficients
+            if(samples[j*n+k] != 0)
+            {
+                fftSpace[j*n+k][0] /= (double) samples[j*n+k]; ///Correct Coefficients
+                fftSpace[j*n+k][1] /= (double) samples[j*n+k]; ///Correct Coefficients
+            }
+            else
+            {
+                fftSpace[j*n+k][0] = 0;
+                fftSpace[j*n+k][1] = 0;
+            }
         }
 }

@@ -68,6 +68,28 @@ int openFile_Write(const char *filename, FILE **inFilePtr, int binary)
     return TRUE;
 }
 
+int openFile_Append(const char *filename, FILE **inFilePtr, int binary)
+{
+    if (binary)
+    {
+        printf("Opening File: %s as binary.\n", filename);
+        *inFilePtr = fopen(filename, "ab"); //!< Open Binary File.
+    }
+    else
+    {
+        printf("Opening File: %s as ASCII.\n", filename);
+        *inFilePtr = fopen(filename, "a"); //!< Open ASCII File.
+    }
+
+    if (*inFilePtr == NULL)
+    {
+        fprintf(stderr,"ERROR: %s could not be opened.\n",filename);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 int readCSV(nttw_integer **data, const int rows, const int cols, const char *filename)
 {
     int j, k, success, size, binary = FALSE;
@@ -224,6 +246,48 @@ int readSignedPGM(long **data, int *rows, int *cols, const char *filename, int b
     return TRUE;
 }
 
+int readUCharPGM(unsigned char **data, int *rows, int *cols, const char *filename, int binary)
+{
+    char type;
+    int width, height, greymax, size, success;
+    unsigned char *tmptr;
+    FILE *inFile = NULL;
+
+    if( !openFile_Read(filename,&inFile,binary) )
+        return FALSE;
+
+    readPGMHeader(inFile,&type,&height,&width,&greymax);
+
+    ///Allocate Memory for Image appropriately
+    size = width*height;
+    *rows = height;
+    *cols = width;
+    *data = arrayUChar_1D(size);
+
+    ///Read Data according to size and type provided in header
+    tmptr = *data;
+    if ((type=='2') || (type=='5'))
+    {
+        while (!feof(inFile) && size--)
+        {
+            success = fscanf(inFile, "%cu", tmptr++);
+        }
+    }
+    else
+        if (type=='3')
+        {
+            while (!feof(inFile) && size--)
+            {
+                success = fscanf(inFile, "%cu", tmptr);
+                success = fscanf(inFile, "%cu", tmptr);
+                success = fscanf(inFile, "%cu", tmptr++);
+            }
+        }
+
+    fclose(inFile); ///Close File
+    return TRUE;
+}
+
 int writePGM(nttw_integer *data, const int rows, const int cols, const int greyMax, const char *filename, int binary)
 {
     int j, k, count = 0;
@@ -265,6 +329,31 @@ int writeSignedPGM(long *data, const int rows, const int cols, const int greyMax
         for (k = 0; k < cols; k ++)
         {
             fprintf(outFile,"%li ",data[count]);
+            count ++;
+        }
+        fprintf(outFile,"\n");
+    }
+
+    fclose(outFile);
+    return TRUE;
+}
+
+int writeUCharPGM(unsigned char *data, const int rows, const int cols, const char *filename, int binary)
+{
+    int j, k, count = 0;
+    FILE *outFile = NULL;
+
+    if( !openFile_Write(filename,&outFile,binary) )
+        return FALSE;
+
+    fprintf(outFile,"P2\n# Generated PGM.\n");
+    fprintf(outFile,"%d %d\n%d\n",cols,rows,256);
+
+    for (j = 0; j < rows; j ++)
+    {
+        for (k = 0; k < cols; k ++)
+        {
+            fprintf(outFile,"%cu ",data[count]);
             count ++;
         }
         fprintf(outFile,"\n");

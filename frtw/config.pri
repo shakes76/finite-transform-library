@@ -31,3 +31,11 @@ DEFINES += NTTW_DLL
 
 include(cflags.pri) # compiler flags
 include(cxxflags.pri) # compiler flags
+
+#32/64-bit Section
+DEFINES += NTTW_64 #Uncomment to build 64-bit version
+NTTW_BUILD_TYPE = 32-bit
+contains(DEFINES,NTTW_64) {
+    NTTW_BUILD_TYPE = 64-bit
+}
+message(Build Type: $$NTTW_BUILD_TYPE)
