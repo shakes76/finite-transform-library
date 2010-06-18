@@ -18,6 +18,16 @@ The library is structured as follows. The modules include are:
   * Fourier module for using FFTW (fourier.h/.c).
 See the [http://finitetransform.sourceforge.net/frtw_api/index.html FRTW API] documentation for more details.
 
+= Building =
+You will need qmake (qt4-qmake) installed and running on your system. This is a cross-platform build tool that comes with [http://qt.nokia.com/ Qt4]. Then its just a matter of running 
+{{{
+qmake
+make
+make install
+}}}
+
+for both NTTW and then FRTW. On Windows use nmake instead of make. You will have to repeat this commands to build the apps, tests or bench applications.
+
 = Apps =
 == Fast Mojette Transform ==
 There are two ways to compute the Fast Mojette Transform (FMT). Firstly, one may do the following, where the commands or options are in round brackets:
