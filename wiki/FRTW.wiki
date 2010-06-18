@@ -19,3 +19,10 @@ The library is structured as follows. The modules include are:
 See the [http://finitetransform.sourceforge.net/frtw_api/index.html FRTW API] documentation for more details.
 
 = Apps =
+== Fast Mojette Transform ==
+There are two ways to compute the Fast Mojette Transform (FMT). Firstly, one may do the following, where the commands or options are in round brackets:
+  # Generate the Farey angle set (fmt_angle) corresponding to either the simple (2) angle set or the L1-norm angle set (1).
+  # Mojette Transform (mt) the image using the generated angle set.
+  # Then convert the projections to the Fast/Finite Radon Transform (FRT) (mt2frt). This generates the FRT space which my be inverted using the iFRT app. as a test, the app automatically generates this for you at the time of writing this guide.
+
+Secondly, one may to the following:
