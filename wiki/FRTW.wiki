@@ -28,3 +28,9 @@ There are two ways to compute the Fast Mojette Transform (FMT). Firstly, one may
 Secondly, one may to the following:
   # Simply run the FMT app (fmt), where the angle set is generated, MT is taken and converted to FRT projections on the fly and a FRT space produced.
   # Run the inverse FMT (ifmt) app to invert the result, which just happens to be similar to the inverse FRT app (ifrt).
+
+== Fast/Finite Radon Transform ==
+The apps included are drt, frt and ifrt for dyadic (power of two sizes). The DRT is a cubic complexity implementation of the FRT.
+
+== Others ==
+Apps mse, crop and line produce the Mean Squared Error, crop an image to specific size and produce a Diophantine line file for lines within the FRT. The latter is a file that can be viewed in [http://code.google.com/p/discrete-geometry-viewer/ DGV].
