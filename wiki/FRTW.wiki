@@ -26,3 +26,5 @@ There are two ways to compute the Fast Mojette Transform (FMT). Firstly, one may
   # Then convert the projections to the Fast/Finite Radon Transform (FRT) (mt2frt). This generates the FRT space which my be inverted using the iFRT app. as a test, the app automatically generates this for you at the time of writing this guide.
 
 Secondly, one may to the following:
+  # Simply run the FMT app (fmt), where the angle set is generated, MT is taken and converted to FRT projections on the fly and a FRT space produced.
+  # Run the inverse FMT (ifmt) app to invert the result, which just happens to be similar to the inverse FRT app (ifrt).
