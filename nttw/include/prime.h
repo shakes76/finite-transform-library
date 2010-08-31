@@ -30,6 +30,11 @@
 #include "global.h"
 
 /**
+ * \defgroup NT Number Theory Routines
+ * \brief Routines for basic number theory used for NTTs.
+ */
+//@{
+/**
     \fn loadPrimes_Small(nttw_integer **data, size_t *size)
     \brief Loads the first 100 primes in data. Memory is allocated and data is passed by reference.
 */
@@ -48,7 +53,7 @@ NTTW_DLL_SYM size_t isPrimeHighlyComposite(const size_t p, size_t *power);
 NTTW_DLL_SYM size_t newHighlyCompositeSize(const size_t p);
 
 /**
-    \fn findClosestPrime(const nttw_integer *primeList, const size_t size, const nttw_integer number, int *nthPrime, int *isPrime)
+    \fn findClosestPrime(const nttw_integer *primeList, const size_t size, const nttw_integer number, size_t *nthPrime, int *isPrime)
     \brief Finds the closest prime which is larger than the number in the primes list provided.
 
     \param nthPrime - Stores the nth prime (index) which is closest. e.g. it may be the 21st prime which is closest.
@@ -63,7 +68,7 @@ NTTW_DLL_SYM nttw_integer findClosestPrime(const nttw_integer *primeList, const 
 NTTW_DLL_SYM nttw_integer findAlternatePrime(const nttw_integer *primeList, const size_t size, const nttw_integer number);
 
 /**
-    \fn findFactors(const nttw_integer *primeList, const int size, const nttw_integer number, nttw_integer **factors, int *noOfFactors)
+    \fn findFactors(const nttw_integer *primeList, const size_t size, const nttw_integer number, nttw_integer **factors, size_t *noOfFactors)
     \brief Finds the unique prime factors of the number using the primes list provided.
 
     \param factors - Is a 1D array passed by reference which will contain the found factors.
@@ -120,5 +125,5 @@ NTTW_DLL_SYM nttw_big_integer minverse_big(const nttw_big_integer num, const ntt
  * \brief Computes the Multiplicative inverse using the Extended Euclidean Algorithm. Signed Version
 */
 NTTW_DLL_SYM long minverse_signed(const long num, const long mod);
-
+//@}
 #endif // PRIME_H_INCLUDED

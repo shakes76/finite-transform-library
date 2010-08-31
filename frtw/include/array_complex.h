@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRTW. If not, see <http://www.gnu.org/licenses/>.
  *
- * \author Shekhar S. Chandra, 2008-9
+ * \author Shekhar S. Chandra, 2008-10
 */
 #ifndef ARRAY_COMPLEX_H_INCLUDED
 #define ARRAY_COMPLEX_H_INCLUDED
@@ -34,21 +34,21 @@
 *
 * \section intro_sec Introduction
 *
-* The various Discrete Radon Transform Algorithms Optimised for C and performance. Array, Timing and Imaging modules are also provided via the NTTW library.
-* This library requires that the sister NTTW library be installed
+* The various Discrete Radon Transform Algorithms Optimised for C and performance. Array, Simple Timing and Imaging (PGM and CSV) modules are also provided via the NTTW library.
+* This library requires that the sister NTTW library be installed.
 *
 * \section features Features
 *
-* Features an Array module, a micro-second Timing module an Imaging module via NTTW.  Fast Fourier Transforms module is provided via the external FFTW library.
-* The Discrete Radon Transform and its fast implementation are provided for dyadic and prime lengths.
+* Features an Array module, a micro-second Timing module an PGM Imaging module via NTTW.  Fast Fourier Transforms module is provided via the external FFTW library.
+* The Discrete Radon Transform and its fast implementation are provided for dyadic and prime lengths. The Mojette Transform and the Fast Mojette algorithm is also implemented (see "Fast Mojette Transform for Discrete Tomography" by Chandra et al.).
 */
 
 /**
- * \defgroup FFTW_Arrays FFTW Array Objects
+ * \defgroup FFTW_Arrays FFTW (Complex) Array Objects
 */
 //@{
 /**
- * \fn fftw_array(const int size)
+ * \fn fftw_array(const size_t size)
  * \brief Forms a FFTW complex array of size
  * \return Pointer to the first element of the array.
  *
@@ -58,7 +58,7 @@
 */
 NTTW_DLL_SYM fftw_complex* fftw_array(const size_t size);
 /**
- * \fn fftw_init_1D(fftw_complex *data, const int size, const nttw_real value)
+ * \fn fftw_init_1D(fftw_complex *data, const size_t size, const nttw_real value)
  * \brief Initializes FFTW array (real and imaginary parts) to value
 */
 NTTW_DLL_SYM void fftw_init_1D(fftw_complex *data, const size_t size, const nttw_real value);

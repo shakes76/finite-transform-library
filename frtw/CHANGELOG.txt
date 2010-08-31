@@ -1,6 +1,18 @@
 FRTW Changelog
 ======================
 
+Version 1.38
+-------------------------
+- Added double type FRT routines
+- Added signed iFRT routine
+- Updated FRTW documentation
+- Added CMake build system files
+
+Version 1.36
+-------------------------
+- Fixed error in m=p projection within the DRT routine.
+- Added the blockcopy DRT code developed by Imants Svalbe (with permission)
+
 Version 1.35
 -------------------------
 - Added Noise Module with Gaussian and Poisson noise support.

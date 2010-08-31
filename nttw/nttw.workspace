@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="nttw.cbp" active="1" />
+		<Project filename="nttw.cbp" />
 		<Project filename="tests/array_test/array_test.cbp" />
 		<Project filename="tests/pgm_test/pgm_test.cbp" />
 		<Project filename="tests/fntt_test/fntt_test.cbp" />
@@ -10,7 +10,8 @@
 		<Project filename="tests/fntt_2D_prime_test/fntt_2D_prime_test.cbp" />
 		<Project filename="bench/fntt_bench/fntt_bench.cbp" />
 		<Project filename="apps/machine_properties/machine_properties.cbp" />
-		<Project filename="tests/cnt_test/cnt_test.cbp" />
 		<Project filename="tests/timing_test/timing_test.cbp" />
+		<Project filename="apps/ntt/ntt.cbp" />
+		<Project filename="apps/intt/intt.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>
