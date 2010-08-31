@@ -36,7 +36,7 @@ cmake .
 make
 make install
 }}}
-for both NTTW and then FRTW. On Windows use nmake instead of make. 
+for both NTTW and then FRTW. On Windows use nmake instead of make. It is best to do an out of source build, so you can use the source tree multiple times for multiple architectures. Use the CMake GUI for this. On Linux you can use ccmake. See the cmake documentation [http://www.cmake.org/cmake/help/documentation.html here].
 
 = Apps =
 == Fast Mojette Transform ==
