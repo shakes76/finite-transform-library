@@ -42,6 +42,17 @@ nttw_integer getIsum(nttw_integer *radon, const size_t n)
     return Isum;
 }
 
+double getIsum_double(double *radon, const size_t n)
+{
+    size_t j;
+    double Isum = 0;
+
+    for(j = 0; j < n; j ++)
+        Isum += radon[j]; //Sum first projection
+
+    return Isum;
+}
+
 nttw_integer getIsum_Integer(nttw_integer *radon, const size_t n, const nttw_integer modulus)
 {
     size_t j;
@@ -76,9 +87,9 @@ void drt(const nttw_integer *field, nttw_integer *bins, const int p)
         }
     }
 
-    for (y = 0; y < p; y ++) ///Columns
-        for (t = 0; t < p; t ++) ///Translate
-            bins[p*p+t] += field[y*p+t];
+    for (t = 0; t < p; t ++) ///Columns
+        for (y = 0; y < p; y ++) ///Translate
+            bins[p*p+t] += field[t*p+y];
 }
 
 void drt_dyadic(const nttw_integer *field, nttw_integer *bins, const int n)
@@ -115,6 +126,52 @@ void drt_dyadic(const nttw_integer *field, nttw_integer *bins, const int n)
     }
 }
 
+void drt_blockcopy(nttw_integer *datain, nttw_integer *dataout, const int p)
+{
+/// variables /
+    int Rrow,Rcol,Irow,Icol=p*(p+1),wrap;
+    nttw_integer *tempi, *tempo;
+
+/// Initialise /
+    tempo = dataout;
+    while (Icol--)
+        *tempo++ = 0;
+
+/// transform m = 0 /
+    tempi = datain;
+    tempo = dataout;
+    for (Irow=0;Irow<p;Irow++)
+    {
+        for (Icol=0;Icol<p;Icol++)
+            *tempo += *tempi++;
+        tempo++;
+    }
+/// transform (1 < m < p-1)
+    tempi = datain;
+    for (Irow=0;Irow<p;Irow++)
+    {
+        tempo = dataout+p;
+        wrap = p;
+        for (Rrow=1;Rrow<=p;Rrow++)
+        {
+            wrap -= Irow;
+            if (wrap<0)
+            {
+                wrap+=p;
+                tempi -= p;
+            }
+            tempi += Irow;
+            for (Rcol=0;Rcol<wrap;Rcol++)
+                *tempo++ += *tempi++;
+            tempi -= p;
+            for (Rcol=wrap;Rcol<p;Rcol++)
+                *tempo++ += *tempi++;
+        }
+        if (Irow == 0)
+            tempi += p;
+    }
+}
+
 void frt(nttw_integer *field, nttw_integer *bins, const int p)
 {
     const int size = p*p;
@@ -142,6 +199,43 @@ void frt(nttw_integer *field, nttw_integer *bins, const int p)
         for (j = 0; j < p; j ++)
             bins[m*p+j] = (nttw_integer) ( projComplex[j][0]/(double)p + 0.5 ); //Round because of epsilons
             //bins[m*p+j] = (nttw_integer) ( projComplex[j][0] + 0.5 ); //Round because of epsilons
+    }
+
+    ///Clean up
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+}
+
+void frt_double(double *field, double *bins, const int p)
+{
+    const int size = p*p;
+    int m, j, fftRank = 2, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+
+    sizes[0] = p;
+    sizes[1] = p;
+    complexField = fftw_array(size);
+    fftResult = fftw_array(size);
+    slice = fftw_array(p);
+    projComplex = fftw_array(p);
+
+    ///FFT image
+    for(j = 0; j < size; j ++) ///Copy data to real part
+        complexField[j][0] = field[j]; //[0] is the real part
+    fft(fftRank,sizes,complexField,fftResult);
+
+    ///Extract slices
+    fftRank = 1;
+    for(m = 0; m < p+1; m ++)
+    {
+        getSlice(m,fftResult,slice,p);
+        ifft(fftRank,sizes,slice,projComplex);
+        //Copy and norm
+        for (j = 0; j < p; j ++)
+            bins[m*p+j] = projComplex[j][0]/(double)p; //Round because of epsilons
+            //bins[m*p+j] = projComplex[j][0]; //Round because of epsilons
     }
 
     ///Clean up
@@ -203,6 +297,68 @@ void frt_dyadic(nttw_integer *field, nttw_integer *bins, const int n)
         for (j = 0; j < n; j ++)
             //bins[(m+n)*n+j] = (nttw_integer) ( projComplex[j][0]/(double)n + 0.5 ); //Round because of epsilons
             bins[(m+n)*n+j] = (nttw_integer) ( projComplex[j][0] + 0.5 ); //Round because of epsilons
+    }
+
+    ///Clean up
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+}
+
+void frt_dyadic_double(double *field, double *bins, const int n)
+{
+    const int size = n*n;
+    int m, j, fftRank = 2, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+
+    sizes[0] = n;
+    sizes[1] = n;
+    complexField = fftw_array(size);
+    fftResult = fftw_array(size);
+    slice = fftw_array(n);
+    projComplex = fftw_array(n);
+
+    ///FFT image
+    for(j = 0; j < size; j ++) ///Copy data to real part
+        complexField[j][0] = field[j]; //[0] is the real part
+    fft(fftRank,sizes,complexField,fftResult);
+
+    ///Extract slices
+    fftRank = 1;
+    for(m = 0; m < n; m ++)
+    {
+        getSlice(m,fftResult,slice,n);
+
+        for(j = 0; j < n; j ++)
+        {
+            slice[j][0] /= n;
+            slice[j][1] /= n;
+        }
+
+        ifft(fftRank,sizes,slice,projComplex);
+
+        //Copy and norm
+        for (j = 0; j < n; j ++)
+            //bins[m*n+j] = projComplex[j][0]/(double)n; //Round because of epsilons
+            bins[m*n+j] = projComplex[j][0]; //Round because of epsilons
+    }
+
+    for(m = 0; m < n/2; m ++)
+    {
+        getSlice_Perp(m,fftResult,slice,n);
+
+        for(j = 0; j < n; j ++)
+        {
+            slice[j][0] /= n;
+            slice[j][1] /= n;
+        }
+
+        ifft(fftRank,sizes,slice,projComplex);
+        //Copy and norm
+        for (j = 0; j < n; j ++)
+            //bins[(m+n)*n+j] = projComplex[j][0]/(double)n; //Round because of epsilons
+            bins[(m+n)*n+j] = projComplex[j][0]; //Round because of epsilons
     }
 
     ///Clean up
@@ -315,6 +471,58 @@ nttw_integer idrt(nttw_integer *bins, nttw_integer *result, const int p)
     return Isum;
 }
 
+nttw_integer idrt_blockcopy(nttw_integer *datain, nttw_integer *dataout, const int p)
+{
+/// variables
+    int Icol = p*p, Irow, Rcol, Rrow, m, wrap;
+    nttw_integer *tempi, *tempo, total = 0;
+
+/// Initialise
+    tempo = dataout;
+    while (Icol--)
+        *tempo++ = 0;
+
+/// inverse transform m = 0
+    tempo = dataout;
+    tempi = datain;
+    for (Irow=0;Irow<p;Irow++)
+    {
+        for (Icol=0;Icol<p;Icol++)
+            *tempo++ = *tempi;
+        total += *tempi++;
+    }
+
+/// inverse transform (1 < m < p-1)
+    for (Rrow=1;Rrow<=p;Rrow++)
+    {
+        tempo = dataout;
+        wrap = p;
+        m = p-Rrow;
+        for (Irow=0;Irow<p;Irow++)
+        {
+            if (wrap<0)
+            {
+                wrap+=p;
+                tempi-=p;
+            }
+            for (Rcol=0;Rcol<wrap;Rcol++)
+                *tempo++ += *tempi++;
+            tempi-=p;
+            for (Rcol=wrap;Rcol<p;Rcol++)
+                *tempo++ += *tempi++;
+            wrap-=m;
+            tempi+=m;
+        }
+    }
+/// subtract total and divide by p
+    tempo = dataout;
+    Icol = p*p;
+    while (Icol--)
+        *tempo++ = (*tempo - total)/p; //!< \todo Leak Identified !!! Not accessed but pointer ends up pointing outside.
+
+    return total;
+}
+
 nttw_integer ifrt(nttw_integer *bins, nttw_integer *result, const int p, const int norm)
 {
     const int size = p*p;
@@ -360,6 +568,126 @@ nttw_integer ifrt(nttw_integer *bins, nttw_integer *result, const int p, const i
             for (j = 0; j < p; j ++)
                 result[m][j] = (nttw_integer) (result[m][j]/(double)p - Isum + 0.5); //Avoid truncation
     }*/
+
+    ///Cleanup
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+
+    return Isum;
+}
+
+double ifrt_double(double *bins, double *result, const int p, const int norm)
+{
+    const int size = p*p;
+    int m, j, fftRank = 1, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+    double Isum = 0;
+
+    Isum = getIsum_double(bins,p);
+    sizes[0] = p;
+    sizes[1] = p;
+    complexField = fftw_array(size);
+    fftResult = fftw_array(size);
+    fftw_init_1D(fftResult,size,0);
+    slice = fftw_array(p);
+    projComplex = fftw_array(p);
+
+    ///FFT projections
+    for(m = 0; m < p+1; m ++)
+    {
+        for (j = 0; j < p; j ++)
+        {
+            projComplex[j][0] = bins[m*p+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        setSlice(m,fftResult,slice,p);
+    }
+
+    ///Inverse FFT to get result
+    fftRank = 2;
+    ifft(fftRank,sizes,fftResult,complexField);
+    for(j = 0; j < size; j ++) ///Copy data from real part
+        result[j] = complexField[j][0]; //[0] is the real part
+    if(norm)
+    {
+        for(m = 0; m < p; m ++)
+            for (j = 0; j < p; j ++)
+                result[m*p+j] = ( result[m*p+j]/(double)p - Isum )/p; //Avoid truncation
+                //result[m][j] = (result[m][j]/(double)size); //Avoid truncation
+    }
+    /*else
+    {
+        for(m = 0; m < p; m ++)
+            for (j = 0; j < p; j ++)
+                result[m][j] = (result[m][j]/(double)p - Isum); //Avoid truncation
+    }*/
+
+    ///Cleanup
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+
+    return Isum;
+}
+
+nttw_integer ifrt_signed(nttw_integer *bins, long *result, const int p, const int norm)
+{
+    const int size = p*p;
+    int m, j, fftRank = 1, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+    long Isum = 0;
+
+    Isum = getIsum(bins,p);
+    sizes[0] = p;
+    sizes[1] = p;
+    complexField = fftw_array(size);
+    fftResult = fftw_array(size);
+    fftw_init_1D(fftResult,size,0);
+    slice = fftw_array(p);
+    projComplex = fftw_array(p);
+
+    ///FFT projections
+    for(m = 0; m < p+1; m ++)
+    {
+        for (j = 0; j < p; j ++)
+        {
+            projComplex[j][0] = (double) bins[m*p+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        setSlice(m,fftResult,slice,p);
+    }
+
+    ///Inverse FFT to get result
+    fftRank = 2;
+    ifft(fftRank,sizes,fftResult,complexField);
+    fftw_array_to_arraySigned(complexField,result,size);
+    if(norm)
+    {
+        for(m = 0; m < p; m ++)
+            for (j = 0; j < p; j ++)
+            {
+                if(result[m*p+j] < 0)
+                    result[m*p+j] = (long) (result[m*p+j]/(double)p - Isum - 0.5)/p; //Avoid truncation
+                else
+                    result[m*p+j] = (long) (result[m*p+j]/(double)p - Isum + 0.5)/p; //Avoid truncation
+            }
+    }
+    else
+    {
+        for(m = 0; m < p; m ++)
+            for (j = 0; j < p; j ++)
+            {
+                if(result[m*p+j] < 0)
+                    result[m*p+j] = (long) (result[m*p+j]/(double)p - Isum - 0.5); //Avoid truncation
+                else
+                    result[m*p+j] = (long) (result[m*p+j]/(double)p - Isum + 0.5); //Avoid truncation
+            }
+    }
 
     ///Cleanup
     fftw_free(complexField);
@@ -438,6 +766,87 @@ nttw_integer ifrt_dyadic(nttw_integer *bins, nttw_integer *result, const int n, 
             for (j = 0; j < n; j ++)
                 //result[m][j] = (nttw_integer) (result[m][j]/(double)n - Isum + 0.5)/n; //Avoid truncation
                 result[m*n+j] = (nttw_integer) (result[m*n+j]/(double)n + 0.5); //Avoid truncation
+    }
+
+    ///Cleanup
+    free_array(oversampling);
+    fftw_free(complexField);
+    fftw_free(fftResult);
+    fftw_free(slice);
+    fftw_free(projComplex);
+
+    return Isum;
+}
+
+double ifrt_dyadic_double(double *bins, double *result, const int n, const int norm)
+{
+    const int size = n*n;
+    int m, j, fftRank = 1, sizes[2];
+    fftw_complex *complexField, *fftResult, *slice, *projComplex;
+    nttw_big_integer *oversampling;
+    double Isum = 0;
+
+    Isum = getIsum_double(bins,n);
+    oversampling = array_1D_big(n);
+    sizes[0] = n;
+    sizes[1] = n;
+    complexField = fftw_array(size);
+    fftw_init_1D(complexField,size,0);
+    fftResult = fftw_array(size);
+    fftw_init_1D(fftResult,size,0);
+    slice = fftw_array(n);
+    projComplex = fftw_array(n);
+
+    dyadic_1D_filter(oversampling,n);
+
+    ///FFT projections
+    for(m = 0; m < n; m ++)
+    {
+        for (j = 0; j < n; j ++)
+        {
+            projComplex[j][0] = bins[m*n+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        for (j = 0; j < n; j ++)
+        {
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
+        }
+        setSlice(m,fftResult,slice,n);
+    }
+
+    for(m = 0; m < n/2; m ++)
+    {
+        for (j = 0; j < n; j ++)
+        {
+            projComplex[j][0] = bins[(m+n)*n+j];
+            projComplex[j][1] = 0.0;
+        }
+        fft(fftRank,sizes,projComplex,slice);
+        for (j = 0; j < n; j ++)
+        {
+            slice[j][0] /= oversampling[j]*n;
+            slice[j][1] /= oversampling[j]*n;
+        }
+        setSlice_Perp(m,fftResult,slice,n);
+    }
+
+    ///Correct for oversampling
+    //dyadic_oversample(oversampling,n); ///Get oversample filter (no need to orient for Fourier)
+    //filter_oversampling(fftResult,oversampling,n);
+
+    ///Inverse FFT to get result
+    fftRank = 2;
+    ifft(fftRank,sizes,fftResult,complexField);
+    for(j = 0; j < size; j ++) ///Copy data from real part
+        result[j] = complexField[j][0]; //[0] is the real part
+    if(norm)
+    {
+        for(m = 0; m < n; m ++)
+            for (j = 0; j < n; j ++)
+                //result[m][j] = (result[m][j]/(double)n - Isum)/n; //Avoid truncation
+                result[m*n+j] = result[m*n+j]/(double)n; //Avoid truncation
     }
 
     ///Cleanup

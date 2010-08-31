@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     int rows, cols, binaryFile = FALSE, dyadicTransform = TRUE;
     unsigned long long duration = 0;
 
-    printf(">| Number TT Program.\n");
+    printf(">| Number Theoretic Transform Program.\n");
     printf(">| Copyright Shekhar Chandra, 2009\n");
     printf(">| Machine Integer Size of %lu bits\n",BITS);
 #if defined (NTTW_64)
