@@ -19,7 +19,8 @@ The library is structured as follows. The modules include are:
 See the [http://finitetransform.sourceforge.net/frtw_api/index.html FRTW API] documentation for more details.
 
 = Building =
-You will need qmake (qt4-qmake) installed and running on your system. This is a cross-platform build tool that comes with [http://qt.nokia.com/ Qt4]. This is especially easy on Ubuntu, as you just install the package qt4-qmake. Then its just a matter of running 
+== QMake ==
+Have qmake (qt4-qmake) installed and running on your system. This is a cross-platform build tool that comes with [http://qt.nokia.com/ Qt4]. This is especially easy on Ubuntu, as you just install the package qt4-qmake. Then its just a matter of running 
 {{{
 qmake
 make
@@ -27,6 +28,15 @@ make install
 }}}
 
 for both NTTW and then FRTW. On Windows use nmake instead of make. You will have to repeat this commands to build the apps, tests or bench applications. If you do not have or cannot get qmake, then a sample Makefile is provided in the downloads section, which you must edit.
+
+== CMake ==
+Have cmake installed and running on your system. This is a cross-platform build tool that is an independent tool which you can grab from [http://www.cmake.org/ CMake.org] for every system. Cmake is advanteous because its always a small install. In the source directory
+{{{
+cmake .
+make
+make install
+}}}
+for both NTTW and then FRTW. On Windows use nmake instead of make. 
 
 = Apps =
 == Fast Mojette Transform ==
