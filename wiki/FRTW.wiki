@@ -54,3 +54,7 @@ The apps included are drt, frt and ifrt for dyadic (power of two sizes). The DRT
 
 == Others ==
 Apps mse, crop and line produce the Mean Squared Error, crop an image to specific size and produce a Diophantine line file for lines within the FRT. The latter is a file that can be viewed in [http://code.google.com/p/discrete-geometry-viewer/ DGV].
+
+== Troubleshooting ==
+=== FRTW ===
+  * If you get the error "nttw/global.h: No such file or directory", you havn't installed NTTW. NTTW is a prerequisite for FRTW.
