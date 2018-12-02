@@ -3,7 +3,7 @@
 * \author Shekhar S. Chandra, 2009
 */
 #include <stdio.h>
-#include "timing.h"
+#include "nttw/timing.h"
 
 int main()
 {

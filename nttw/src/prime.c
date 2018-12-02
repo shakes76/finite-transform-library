@@ -8,24 +8,25 @@
  * This file is part of NTTW Library.
  *
  * NTTW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * NTTW is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with NTTW. If not, see <http://www.gnu.org/licenses/>.
  *
  * \author Shekhar S. Chandra, 2008-9
 */
 #include <stdio.h>
 
-#include "array.h" //Order important for gcc 4.3.3
-#include "prime.h"
+#include "nttw/array.h" //Order important for gcc 4.3.3
+#include "nttw/image.h" //Order important for gcc 4.3.3
+#include "nttw/prime.h"
 
 void loadPrimes_Small(nttw_integer **data, size_t *size)
 {
@@ -247,6 +248,36 @@ nttw_integer findFirstPrimitiveRoot_Full(const nttw_integer *primes, const size_
     return root;
 }
 
+void findPrimeLengthParameters(const nttw_integer prime, nttw_integer *root, nttw_integer *modulus, nttw_integer *proot)
+{
+    ///Constants
+    const int totalRows = 1000;
+    const int totalCols = 10;
+    const char *primes_filename = "primes.csv";
+
+    ///NTT Variables
+    nttw_integer *primes;
+
+    ///Load Prime List (primes allocated within)
+    if( !readCSV(&primes,totalRows,totalCols,primes_filename) )
+    {
+        printf(">| Could not open primes file.\n");
+        exit(EXIT_FAILURE);
+    }
+    printf(">| Primes list loaded sucessfully.\n");
+
+    ///determine modulus and roots
+    *root = findFirstPrimitiveRoot(prime);
+    printf(">| Root: %u", *root);
+    *modulus = findAlternatePrime(primes, totalRows*totalCols, prime);
+    printf(", Modulus: %u", *modulus);
+    *proot = findFirstPrimitiveRoot(*modulus);
+    printf(" with k: %lu, Primitive Root: %u\n", (*modulus-1)/prime, *proot);
+
+    ///Deallocate
+    free_array(primes);
+}
+
 nttw_big_integer euclidean(nttw_big_integer a, nttw_big_integer b, nttw_big_integer *x, nttw_big_integer *y)
 {
     nttw_big_integer q,r,x_1,x_2,y_1,y_2;
@@ -296,6 +327,46 @@ long euclidean_long(long a, long b, long *x, long *y)
 
     return a;
 }
+
+nttw_big_integer gcd(nttw_big_integer u, nttw_big_integer v)
+ {
+     int shift;
+     nttw_big_integer diff;
+
+     /* GCD(0,x) := x */
+     if (u == 0 || v == 0)
+       return u | v;
+
+     /* Let shift := lg K, where K is the greatest power of 2
+        dividing both u and v. */
+     for (shift = 0; ((u | v) & 1) == 0; ++shift) {
+         u >>= 1;
+         v >>= 1;
+     }
+
+     while ((u & 1) == 0)
+       u >>= 1;
+
+     /* From here on, u is always odd. */
+     do {
+         while ((v & 1) == 0)  /* Loop X */
+           v >>= 1;
+
+         /* Now u and v are both odd, so diff(u, v) is even.
+            Let u = min(u, v), v = diff(u, v)/2. */
+         if (u < v) {
+             v -= u;
+         } else {
+             diff = u - v;
+             u = v;
+             v = diff;
+         }
+         v >>= 1;
+     } while (v != 0);
+
+     return u << shift;
+ }
+
 
 nttw_integer modpow(nttw_integer base, nttw_integer exponent, nttw_integer modulus)
 {

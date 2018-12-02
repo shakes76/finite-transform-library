@@ -15,8 +15,8 @@ win32:DEFINES += _CRT_SECURE_NO_WARNINGS
 
 DEFINES += NTTW_DLL
 
-include(cflags.pri) # compiler flags
-include(cxxflags.pri) # compiler flags
+include(../cflags.pri) # compiler flags
+include(../cxxflags.pri) # compiler flags
 
 #32/64-bit Section
 DEFINES += NTTW_64 #Uncomment to build 64-bit version

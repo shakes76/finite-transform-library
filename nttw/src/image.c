@@ -8,21 +8,23 @@
  * This file is part of NTTW Library.
  *
  * NTTW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * NTTW is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with NTTW. If not, see <http://www.gnu.org/licenses/>.
  *
  * \author Shekhar S. Chandra, 2008-9
 */
-#include "image.h"
+#include "nttw/image.h"
+
+#include <string.h>
 
 int openFile_Read(const char *filename, FILE **inFilePtr, int binary)
 {
@@ -116,6 +118,29 @@ int readCSV(nttw_integer **data, const int rows, const int cols, const char *fil
     return TRUE;
 }
 
+int isBinaryPGM(const char *filename)
+{
+    char character;
+    int readResult, binary = FALSE;
+    FILE *inFile = NULL;
+
+    if( !openFile_Read(filename,&inFile,FALSE) )
+        return FALSE;
+
+    readResult = getc(inFile);
+    character = (char)readResult;
+    readResult = getc(inFile);
+    character = (char)readResult;
+    printf("Image Type: %c\n", character);
+
+    if(character == '5' || character == '6')
+        binary = TRUE;
+
+    fclose(inFile); ///Close File
+
+    return binary;
+}
+
 int readPGMHeader(FILE *inFile, char *type, int *rows, int *cols, int *maxGrey)
 {
     char a, b, c[100];
@@ -164,7 +189,6 @@ int readPGMHeader(FILE *inFile, char *type, int *rows, int *cols, int *maxGrey)
 
 int readPGM(nttw_integer **data, int *rows, int *cols, const char *filename, int binary)
 {
-    char type;
     int width, height, greymax, size, success;
     nttw_integer *tmptr;
     FILE *inFile = NULL;
@@ -172,25 +196,90 @@ int readPGM(nttw_integer **data, int *rows, int *cols, const char *filename, int
     if( !openFile_Read(filename,&inFile,binary) )
         return FALSE;
 
-    readPGMHeader(inFile,&type,&height,&width,&greymax);
-
-    ///Allocate Memory for Image appropriately
-    size = width*height;
-    *rows = height;
-    *cols = width;
-    *data = array_1D(size);
-
-    ///Read Data according to size and type provided in header
-    tmptr = *data;
-    if ((type=='2') || (type=='5'))
+    if(binary)
     {
-        while (!feof(inFile) && size--)
+        char character;
+        int readResult, j, k;
+
+        printf("Reading File: %s as binary.\n", filename);
+        readResult = getc(inFile);
+        character = (char)readResult;
+        readResult = getc(inFile);
+        character = (char)readResult;
+        printf("Image Type: %c\n", character);
+        //read endl
+        readResult = getc(inFile);
+        character = (char)readResult;
+        //Read comment
+        readResult = getc(inFile);
+        character = (char)readResult;
+        if (character == '#')
         {
-            success = fscanf(inFile, FORMAT_INPUT_STR, tmptr++);
+            printf("Comment: %c\n", character);
+            do
+            {
+              readResult = getc(inFile);
+              character = (char)readResult;
+            }
+            while (character != '\n');
+        }
+        printf("Read Comment.\n");
+
+        fread(&width, sizeof(width), 1, inFile);
+        fread(&height, sizeof(height), 1, inFile);
+        readResult = getc(inFile); //endl
+        character = (char)readResult;
+//        printf("Character: %c\n", character);
+        fread(&greymax, sizeof(greymax), 1, inFile);
+        readResult = getc(inFile); //endl
+        character = (char)readResult;
+//        printf("Character: %c\n", character);
+
+        ///Allocate Memory for Image appropriately
+        size = width*height;
+        *rows = height;
+        *cols = width;
+        *data = array_1D(size);
+        printf("Read Parameters: %d, %d, %d\n", width, height, greymax);
+
+        tmptr = *data;
+        for (j = 0; j < height; j ++)
+        {
+            for (k = 0; k < width; k ++)
+            {
+                fread(tmptr, sizeof(tmptr), 1, inFile);
+//                printf("%d,", tmptr);
+                tmptr ++;
+            }
+//            printf("\n");
+            readResult = getc(inFile); //endl
+            character = (char)readResult;
+//            printf("Character: %c\n", character);
         }
     }
     else
-        if (type=='3')
+    {
+        char type;
+
+        printf("Reading File: %s as ASCII.\n", filename);
+        readPGMHeader(inFile,&type,&height,&width,&greymax);
+
+        ///Allocate Memory for Image appropriately
+        size = width*height;
+        *rows = height;
+        *cols = width;
+        *data = array_1D(size);
+
+        ///Read Data according to size and type provided in header
+        tmptr = *data;
+        if ((type=='2') || (type=='5'))
+        {
+            while (!feof(inFile) && size--)
+            {
+                success = fscanf(inFile, FORMAT_INPUT_STR, tmptr++);
+            }
+        }
+        else if (type=='3')
         {
             while (!feof(inFile) && size--)
             {
@@ -199,6 +288,7 @@ int readPGM(nttw_integer **data, int *rows, int *cols, const char *filename, int
                 success = fscanf(inFile, FORMAT_INPUT_STR, tmptr++);
             }
         }
+    }
 
     fclose(inFile); ///Close File
     return TRUE;
@@ -290,23 +380,54 @@ int readUCharPGM(unsigned char **data, int *rows, int *cols, const char *filenam
 
 int writePGM(nttw_integer *data, const int rows, const int cols, const int greyMax, const char *filename, int binary)
 {
-    int j, k, count = 0;
+    int j, k;
+    nttw_integer *tmptr;
     FILE *outFile = NULL;
 
     if( !openFile_Write(filename,&outFile,binary) )
         return FALSE;
 
-    fprintf(outFile,"P2\n# Generated PGM.\n");
-    fprintf(outFile,"%d %d\n%d\n",cols,rows,greyMax);
-
-    for (j = 0; j < rows; j ++)
+    if(binary)
     {
-        for (k = 0; k < cols; k ++)
+        char imgType[] = "P5\n", desc[] = "# Generated PGM.\n", endl[] = "\n";
+
+        printf("Writing File: %s as binary.\n", filename);
+        fwrite(imgType, sizeof(imgType[0]), strlen(imgType), outFile);
+        fwrite(desc, sizeof(desc[0]), strlen(desc), outFile);
+        fwrite(&cols, sizeof(cols), 1, outFile);
+        fwrite(&rows, sizeof(rows), 1, outFile);
+        fwrite(endl, sizeof(endl[0]), strlen(endl), outFile);
+        fwrite(&greyMax, sizeof(greyMax), 1, outFile);
+        fwrite(endl, sizeof(endl[0]), strlen(endl), outFile);
+
+        tmptr = data;
+        for (j = 0; j < rows; j ++)
         {
-            fprintf(outFile,FORMAT_OUTPUT_STR,data[count]);
-            count ++;
+            for (k = 0; k < cols; k ++)
+            {
+                fwrite(tmptr, sizeof(tmptr), 1, outFile);
+                tmptr ++;
+            }
+            fwrite(endl, sizeof(endl[0]), strlen(endl), outFile);
         }
-        fprintf(outFile,"\n");
+    }
+    else
+    {
+        int count = 0;
+
+        printf("Writing File: %s as ASCII.\n", filename);
+        fprintf(outFile,"P2\n# Generated PGM.\n");
+        fprintf(outFile,"%d %d\n%d\n",cols,rows,greyMax);
+
+        for (j = 0; j < rows; j ++)
+        {
+            for (k = 0; k < cols; k ++)
+            {
+                fprintf(outFile,FORMAT_OUTPUT_STR,data[count]);
+                count ++;
+            }
+            fprintf(outFile,"\n");
+        }
     }
 
     fclose(outFile);
@@ -443,6 +564,7 @@ long* embedImage(long *initImage, const int initRows, const int initCols, const 
     }
 
     newImage = arraySigned_1D(tmpRows*tmpCols);
+    initSigned_1D(newImage, tmpRows*tmpCols, 0);
 
     for(j = 0; j < imgRows; j ++)
         for(k = 0; k < imgCols; k ++)
@@ -461,6 +583,76 @@ long* diffImage(long *image1, long *image2, const int rows, const int cols)
     for(j = 0; j < rows; j ++)
         for(k = 0; k < cols; k ++)
             result[j*cols+k] = image1[j*cols+k] - image2[j*cols+k];
+
+    return result;
+}
+
+long* addImage(long *image1, long *image2, const int rows, const int cols)
+{
+    int j, k;
+    long *result = NULL;
+
+    result = arraySigned_1D(rows*cols);
+
+    for(j = 0; j < rows; j ++)
+        for(k = 0; k < cols; k ++)
+            result[j*cols+k] = image1[j*cols+k] + image2[j*cols+k];
+
+    return result;
+}
+
+nttw_integer* flipImage(nttw_integer *image, const int rows, const int cols)
+{
+    int j, k;
+    nttw_integer *result = NULL;
+
+    result = array_1D(rows*cols);
+
+    for(j = 0; j < rows; j ++)
+        for(k = 0; k < cols; k ++)
+            result[(rows-1-j)*rows+(cols-1-k)] = image[j*rows+k];
+
+    return result;
+}
+
+long* flipSignedImage(long *image, const int rows, const int cols)
+{
+    int j, k;
+    long *result = NULL;
+
+    result = arraySigned_1D(rows*cols);
+
+    for(j = 0; j < rows; j ++)
+        for(k = 0; k < cols; k ++)
+            result[(rows-1-j)*rows+(cols-1-k)] = image[j*rows+k];
+
+    return result;
+}
+
+nttw_integer* rotateImage90Degs(nttw_integer *image, const int rows, const int cols)
+{
+    int j, k;
+    nttw_integer *result = NULL;
+
+    result = array_1D(rows*cols);
+
+    for(j = 0; j < rows; j ++)
+        for(k = 0; k < cols; k ++)
+            result[k*rows+(cols-1-j)] = image[j*rows+k];
+
+    return result;
+}
+
+long* rotateSignedImage90Degs(long *image, const int rows, const int cols)
+{
+    int j, k;
+    long *result = NULL;
+
+    result = arraySigned_1D(rows*cols);
+
+    for(j = 0; j < rows; j ++)
+        for(k = 0; k < cols; k ++)
+            result[k*rows+(cols-1-j)] = image[j*rows+k];
 
     return result;
 }

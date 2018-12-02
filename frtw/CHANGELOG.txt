@@ -1,6 +1,14 @@
 FRTW Changelog
 ======================
 
+Version 1.50
+-------------------------
+- Added the Number Theoretic Radon Transform (NRT) to the Radon module (published in the DICTA 2009 paper and IET CV paper under review)
+- Added ghosts module and deghosting capabilty to library (published in the Ghosts paper of IEEE Trans. Image Proc. (TIP) October 2012)
+- Added applications building via CMake
+- Updated the library to the LPGL license
+- Updated NTTW detection in the CMake configs
+
 Version 1.38
 -------------------------
 - Added double type FRT routines

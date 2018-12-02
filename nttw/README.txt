@@ -1,50 +1,44 @@
-NTTW Library only needs C standard library, build projects are provided from qmake (Qt 4)
-which is a cross-platform build tool. Projects are also provided for Code::Blocks a
-cross platform IDE.
+NTTW Library only needs C standard library, build projects are provided for CMake 2.6+
+which is a cross-platform build tool. One can generate makefiles and Codeblocks, Visual Studio and Eclipse projects
+from CMake.
+
+BUILD
+-----------------------------------------------
+Simply create a build directory, then run ccmake in that directory or cmake-gui from anywhere. For ccmake, it looks like
+
+ $ cd /path/to/nttw-source/
+ $ mkdir build
+ $ cd build
+ $ ccmake ..
+ 
+After configuring as desired, on Linux with GCC:
+ $ make -j 4
+
+Or on Windows, via the command line:
+ $ jom /j 4 or nmake
+If you dont have the open-source multi-threaded jom, use nmake.
+     
+For more help, consult any CMake guid or manual.
 
 -----------------------------------------------
-LINUX - gcc-4.2.4 with Qt 4 installed
-Build Instructions:
+The Doxygen configuration is stored in file: nttw.doxy
 
-1. Build the Library (nttw.pro)
-	qmake nttw.pro
-	make
-2. Build the Benches
-	cd bench
-	qmake
-	make
-3. Build the Tests
-	cd ../tests
-	qmake
-	make
-4. Build the Applications
-	cd ../apps
-	qmake
-	make
-	
-Note: To use older versions of gcc-4 comment out the compiler flags (-march and -mtune flags) in file cxxflags.pri.
+MODULES
 -----------------------------------------------
-WINDOWS - msvc-2005 or msvc-2008
-Build Instructions:    
+Imaging - image.h
+The image library supports IO of 32-bit signed PGM images.
+It also supports some basic arithmetic and operations such as flip and crop.
 
-1. Build the Library (nttw.pro)
-	qmake nttw.pro
-	nmake
-2. Build the Benches
-	cd bench
-	qmake
-	nmake
-3. Build the Tests
-	cd ../tests
-	qmake
-	nmake
-4. Build the Applications
-	cd ../apps
-	qmake
-	nmake
-    
------------------------------------------------
-The Library qmake configuration is stored in file: config.pri
-The CXX compiler tweaks are stored in file: cxxflags.pri
-The Doxygen configuration is stored in file: Doxyfile.doxy
+Array - array.h
+Supports dynamically allocated arrays of different types.
+Initialisation methods for the arrays are also provided.
 
+Timing - timing.h
+Cross-platform micro-second timing supprt
+
+Prime Number Operations - prime.h
+Finding closest prime from list, finding factors of a number etc.
+Finding primitive roots, multiplicative inverses and GCDs etc.
+
+Number Transforms - number.h
+Number Theoretic Transforms for integer only signals

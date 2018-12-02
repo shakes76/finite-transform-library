@@ -2,13 +2,17 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Add Sources
-set(NTTW_SOURCES timing array image prime number32)
+set(NTTW_SOURCES timing array image prime number)
 # Add Headers into List
-file(GLOB NTTW_HEADERS ${NTTW_SOURCE_DIR}/include/*.h) 
+file(GLOB NTTW_HEADERS ${NTTW_SOURCE_DIR}/include/nttw/*.h) 
 
 # 64-bit Build?
-set (NTTW_64 ON) #True
-#set (NTTW_64 OFF) #False
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8) #64-bit environment
+  set (NTTW_64 ON) #True
+  message("Detected 64-bit system. Using appropriate 64-bit integers.")
+ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 8) #64-bit environment
+  set (NTTW_64 OFF) #False
+ENDIF(CMAKE_SIZEOF_VOID_P EQUAL 8) #64-bit environment
 
 #Add compiler flags
 add_definitions (-DNTTW_DLL -DNTTW_MAKEDLL)
@@ -20,6 +24,11 @@ endif (NTTW_64)
 # The extension is already found. Any number of sources could be listed here.
 include_directories (${NTTW_SOURCE_DIR}/include) 
 add_library (nttw SHARED ${NTTW_SOURCES}) 
+
+#MSVC
+if(MSVC)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS) #remove "unsafe functions" warnings
+endif(MSVC)
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(nttw

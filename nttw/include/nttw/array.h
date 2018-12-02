@@ -9,16 +9,16 @@
  * This file is part of NTTW Library.
  *
  * NTTW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * NTTW is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with NTTW. If not, see <http://www.gnu.org/licenses/>.
  *
  * \author Shekhar S. Chandra, 2008-9
@@ -99,31 +99,31 @@ NTTW_DLL_SYM nttw_big_integer* array_1D_big(const size_t size);
 
 /**
  * \fn init_1D(nttw_integer *data, const size_t size, const nttw_integer value)
- * Initializes the 1D array to value provided.
+ * \brief Initializes the 1D array to value provided.
 */
 NTTW_DLL_SYM void init_1D(nttw_integer *data, const size_t size, const nttw_integer value);
 
 /**
  * \fn initSigned_1D(long *data, const size_t size, const long value)
- * Initializes a signed 1D array to value provided.
+ * \brief Initializes a signed 1D array to value provided.
 */
 NTTW_DLL_SYM void initSigned_1D(long *data, const size_t size, const long value);
 
 /**
  * \fn initUChar_1D(unsigned char *data, const size_t size, const unsigned char value)
- * Initializes a unsigned character 1D array to value provided.
+ * \brief Initializes a unsigned character 1D array to value provided.
 */
 NTTW_DLL_SYM void initUChar_1D(unsigned char *data, const size_t size, const unsigned char value);
 
 /**
  * \fn init_1D_big(nttw_big_integer *data, const size_t size, const nttw_big_integer value)
- * Initializes the 1D array to value provided.
+ * \brief Initializes the 1D array to value provided.
 */
 NTTW_DLL_SYM void init_1D_big(nttw_big_integer *data, const size_t size, const nttw_big_integer value);
 
 /**
  * \fn free_array(void *pointer)
- * Frees the Byte Aligned array allocated by array() or array_1D() correctly.
+ * \brief Frees the Byte Aligned array allocated by array() or array_1D() correctly.
 */
 NTTW_DLL_SYM void free_array(void *pointer);
 //@}

@@ -10,16 +10,16 @@
  * This file is part of FRTW Library.
  *
  * FRTW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * FRTW is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with FRTW. If not, see <http://www.gnu.org/licenses/>.
  *
  * \author Shekhar S. Chandra, 2008-9
@@ -139,6 +139,18 @@ NTTW_DLL_SYM void markFiniteAngle(const nttw_big_integer value, const nttw_integ
  * The mapping was developed by Chandra et al (arXiv:1006.1965v1 [physics.med-ph]).
 */
 NTTW_DLL_SYM void computeAngle(const size_t N, long p, long q, nttw_integer *mLookUp, nttw_integer *sLookUp, vector *farey, nttw_big_integer *finite, nttw_integer *perps, nttw_big_integer *angleCount);
+/**
+ * \fn finiteCoverage(const size_t N, const vector *farey, const nttw_big_integer totalAngles, int *octants)
+ * \brief Constructs a histpgram of the coverage that the provided Farey fractions provide of a FRT space of size N.
+*/
+NTTW_DLL_SYM nttw_big_integer* finiteCoverage(const size_t N, const vector *farey, const nttw_big_integer totalAngles, int *octants);
+/**
+ * \fn finiteCoverageHistogram(const size_t N, int *octants)
+ * \brief Constructs a histpgram of the coverage that the provided Farey fractions provide of a FRT space of size N.
+ *
+ * This function handles the creation of the Farey sequence as well.
+*/
+NTTW_DLL_SYM nttw_big_integer* finiteCoverageHistogram(const size_t N, int *octants);
 
 /**
  * \fn fmt_angleSet(const size_t N, const size_t P, const size_t Q, vector *farey, nttw_big_integer *finite, nttw_integer *perps)
@@ -161,6 +173,12 @@ NTTW_DLL_SYM nttw_big_integer fmt_angleSet_Simple(const size_t N, vector *farey,
  * The angle set was developed by Chandra et al (arXiv:1006.1965v1 [physics.med-ph]).
 */
 NTTW_DLL_SYM nttw_big_integer fmt_angleSet_L1(const size_t N, const size_t P, const size_t Q, vector *farey, nttw_big_integer *finite, nttw_integer *perps);
+/**
+ * \fn fmt_angleSet_limited(const size_t N, const size_t P, const size_t Q, vector *farey, nttw_big_integer *finite, nttw_integer *perps, int *octs)
+ * \brief Determines the limited finite angle set for the FMT by generating the Farey set for order n and sorting in ascending l1 norm. The shortest fractions are chosen to form the set.
+*/
+NTTW_DLL_SYM nttw_big_integer fmt_angleSet_limited(const size_t N, const size_t P, const size_t Q, vector *farey, nttw_big_integer *finite, nttw_integer *perps, int *octs);
+NTTW_DLL_SYM nttw_big_integer fmt_angleSet_limitedToRows(const size_t N, const size_t P, const size_t Q, vector *farey, nttw_big_integer *finite, nttw_integer *perps, int *octs);
 
 /**
  * \fn mt(const vector *angles, const nttw_integer *data, mojetteProjection *set, const size_t mu, const size_t rows, const size_t cols)
@@ -185,6 +203,8 @@ NTTW_DLL_SYM nttw_integer* fmt_noise(const size_t P, const size_t Q, const nttw_
 /**
  * \fn mt2frt(const vector *farey, const nttw_big_integer *finite, const nttw_integer *perps, const mojetteProjection *set, const size_t mu, const size_t rows, nttw_integer *frtSpace, const size_t N)
  * \brief Mojette projections are mapped to the FRT space using the finite mapping developed by Chandra et al.
+
+ * This function is both dyadic and prime length enabled. By default, FMT modules are dyadic unless otherwise stated.
 */
 NTTW_DLL_SYM void mt2frt(const vector *farey, const nttw_big_integer *finite, const nttw_integer *perps, const mojetteProjection *set, const size_t mu, const size_t rows, nttw_integer *frtSpace, const size_t N);
 /**

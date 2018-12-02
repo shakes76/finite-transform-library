@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     nttw_integer *frtSpace, *perpFlags;
     mojetteProjection *set;
     vector *angles;
-    int binaryFile = FALSE;
+    int binaryFile = FALSE, dyadicSize = TRUE;
     size_t n, N, size, mu;
     unsigned long long duration = 0;
     nttw_big_integer *finiteAngles;
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     printf(">| Mojette Transform to FRT Program.\n");
     printf(">| Copyright Shekhar Chandra, 2008-10\n");
-    printf(">| Machine Integer Size of %u bits\n",BITS);
+    printf(">| Machine Integer Size of %u bits\n", BITS);
 #if defined (NTTW_64)
     printf(">| Using 64-bit mode.\n");
 #else
@@ -52,6 +52,9 @@ int main(int argc, char *argv[])
     N = atoi(argv[4]);
     SNR = atof(argv[5]);
 
+    if(N % 2 == 1) ///Assume prime if odd
+        dyadicSize = FALSE;
+
     //--------------------------------------------
     ///Load Image
     fprintf(stderr,">| Reading... ");
@@ -69,7 +72,10 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Done.\n");
 
     ///Output parameters to be used
-    size = N+N/2;
+    if(dyadicSize)
+        size = N+N/2;
+    else
+        size = N+1;
     frtSpace = array_1D(N*size);
     result = arraySigned_1D(N*N);
 
@@ -83,12 +89,11 @@ int main(int argc, char *argv[])
     else
         mt2frt(angles,finiteAngles,perpFlags,set,mu,n,frtSpace,N);
 
-    //fprintf(stderr,">| Writing File... ");
-    ///Save Result
-    //writePGM(frtSpace,size,N,255,argv[6],binaryFile);
-
     ///Invert
-    ifrt_dyadic_signed(frtSpace,result,N,TRUE);
+    if(dyadicSize)
+        ifrt_dyadic_signed(frtSpace, result, N, TRUE);
+    else
+        ifrt_signed(frtSpace, result, N, TRUE);
 
     STOP_TIMER;
     duration = MICROSECONDS_ELAPSED;
@@ -96,7 +101,10 @@ int main(int argc, char *argv[])
 
     ///Write
     fprintf(stderr,">| Writing File... ");
-    writeSignedPGM(result,N,N,255,argv[6],binaryFile);
+    ///Save Result
+    writePGM(frtSpace,size,N,255,argv[6],binaryFile);
+    //fprintf(stderr,">| Writing File... ");
+    //writeSignedPGM(result,N,N,255,argv[6],binaryFile);
 
     resultCropped = truncateImage(result,N,N,n,n); ///Crop result
 

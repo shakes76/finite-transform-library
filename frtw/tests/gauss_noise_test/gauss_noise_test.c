@@ -4,6 +4,8 @@
 * Outputs image result.
 * \author Shekhar S. Chandra, 2008-9
 */
+#include <stdio.h>
+
 //NTTW
 #include <nttw/array.h>
 
@@ -27,9 +29,10 @@ int main(int argc, char *argv[])
     printf(">| Using 32-bit mode.\n");
 #endif
 
-    if(argc != 3)
+    if(argc != 4)
     {
-        printf(">| Usage: %s <mean> <stdev>\n",argv[0]);
+        printf(">| Usage: %s <mean> <stdev> <output>\n",argv[0]);
+        printf(">| Files should be PGM formats.\n");
         return EXIT_FAILURE;
     }
     mean = atoi(argv[1]);
@@ -43,7 +46,7 @@ int main(int argc, char *argv[])
         for(k = 0; k < Size; k ++)
             image[j*Size+k] = (nttw_integer) Normal(mean,stdev);
 
-    writePGM(image,Size,Size,255,"gauss_noise_test.pgm",binaryFile);
+    writePGM(image,Size,Size,255,argv[3],binaryFile);
 
     //--------------------------------------------
     ///Cleanup

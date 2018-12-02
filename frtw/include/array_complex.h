@@ -3,22 +3,22 @@
  * \file array_complex.h
  * \brief Complex Array Header/Object for the FRTW C Library.
  *
- * This wraps all the FFTW malloc and free functions for producing arrays for 1D/2D.
+ * This wraps all the FFTW malloc and free functions for producing complex-valued arrays for 1D/2D.
  * Functions for copying and differencing arrays are included also.
  *
  * This file is part of FRTW Library.
  *
  * FRTW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * FRTW is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with FRTW. If not, see <http://www.gnu.org/licenses/>.
  *
  * \author Shekhar S. Chandra, 2008-10

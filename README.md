@@ -25,6 +25,7 @@ Python implementation features:
 * Discrete Radon Transforms
 
 ## Build
+See the build page for details. Usually involves the following:
 ```
 mkdir build
 cd build
