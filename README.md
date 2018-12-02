@@ -11,9 +11,10 @@ C implementation features:
 - FRTW Sub Library for Discrete Radon Transforms (DRTs), Mojette Transforms, Discrete Fourier Transforms (DFTs) via FFTW
 
 Python implementation features:
-- Work in progress. Check back for updates.
+- Initial Python implementations can be found in the scripts/ folder.
 
 ## Features
+This library provides C and Python implementations of the following transforms:
 * Number Theoretic Transforms
 * High Resolution Timing
 * PGM Imaging
@@ -24,8 +25,10 @@ Python implementation features:
 * Discrete Fourier Slice Theorem
 * Discrete Radon Transforms
 
+Fast Fourier Transforms are available via the FFTW library.
+
 ## Build
-See the build page for details. Usually involves the following:
+See the [build page for details](../experimental/Build.md). Usually involves the following:
 ```
 mkdir build
 cd build
@@ -51,6 +54,10 @@ Chandra, S. S.; Svalbe, I.
 <span style="font-weight: bold;">Computer Vision, IET</span>, 2014, 8(4), 338-346.  
 DOI: [10.1049/iet-cvi.2013.0101](http://dx.doi.org/10.1049/iet-cvi.2013.0101)  
 FTL Module: <span style="font-weight: bold;">FRTW/radon</span>
+
+Chandra, S. S.
+"[Fast Digital Convolutions using Bit-Shifts](https://arxiv.org/abs/1005.1497)
+FTL Module: Coming soon
 
 ## Licensing
 This library is available under the terms of the Lesser GNU Public License v3.
