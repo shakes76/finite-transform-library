@@ -3,7 +3,7 @@ This library is dependent on FFTW (http://www.fftw.org) and for Windows using Vi
 This project uses CMake.
 
 # Windows
-* I downloaded the fftw-3.3.5-dll64.zip file, extracted it to a directory (used later) and setup .lib files as explained by the [FFTW Windows guide](http://www.fftw.org/install/windows.html).
+* I downloaded the fftw-3.3.5-dll64.zip file, extracted it to a directory (used later) and setup .lib files as explained by the [FFTW Windows guide](http://www.fftw.org/install/windows.html). You can see the log of what I did for Visual Studio 14 (VS 2015) [on the wiki](https://github.com/shakes76/finite-transform-library/wiki/FFTW-Setup-Guide-for-Windows).
 * Using cmake-gui, run configure making sure to point to the FFTW libraries directory above by setting FFTW_LIBRARIES and FFTW_INCLUDES
 * Be sure to point to the library you want, usually libfftw3-3.lib
 * Generate from CMake and open solution file .sln
