@@ -9,7 +9,9 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 #Add compiler flags
-add_definitions(-DNTTW_MAKEDLL)
+if(BUILD_SHARED_LIBS)
+  add_definitions (-DNTTW_DLL -DNTTW_MAKEDLL)
+endif(BUILD_SHARED_LIBS)
 #GCC
 if(CMAKE_COMPILER_IS_GNUCC)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -march=native -fwrapv")

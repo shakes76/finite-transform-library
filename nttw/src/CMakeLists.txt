@@ -14,16 +14,10 @@ ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 8) #64-bit environment
   set (NTTW_64 OFF) #False
 ENDIF(CMAKE_SIZEOF_VOID_P EQUAL 8) #64-bit environment
 
-#Add compiler flags
-add_definitions (-DNTTW_DLL -DNTTW_MAKEDLL)
-if (NTTW_64)
-	add_definitions (-DNTTW_64)
-endif (NTTW_64)
-
 # Create a library called "nttw" which includes the source files.
 # The extension is already found. Any number of sources could be listed here.
 include_directories (${NTTW_SOURCE_DIR}/include) 
-add_library (nttw SHARED ${NTTW_SOURCES}) 
+add_library (nttw ${NTTW_SOURCES}) 
 
 #MSVC
 if(MSVC)

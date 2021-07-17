@@ -6,13 +6,10 @@ set(FRTW_SOURCES array_complex vector mojette noise fourier radon ghosts)
 # Add Headers into List
 file(GLOB FRTW_HEADERS ${FRTW_SOURCE_DIR}/include/*.h) 
 
-#Add compiler flags
-add_definitions (-DNTTW_DLL -DNTTW_MAKEDLL)
-
 # Create a library called "FRTW" which includes the source files.
 # The extension is already found. Any number of sources could be listed here.
 include_directories (${FRTW_SOURCE_DIR}/include ${NTTW_SOURCE_DIR}/include) 
-add_library (frtw SHARED ${FRTW_SOURCES}) 
+add_library (frtw ${FRTW_SOURCES}) 
 
 #MSVC
 if(MSVC)

@@ -4,6 +4,11 @@ project (FTL C)
 
 set(COMBINED_BUILD ON)
 
+#-----------------------------------------------------------------------------
+# Enable/Disable Shared Libraries
+OPTION(BUILD_SHARED_LIBS "Build FTL with shared libraries." ON)
+SET(FTL_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+
 #Set output paths
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
